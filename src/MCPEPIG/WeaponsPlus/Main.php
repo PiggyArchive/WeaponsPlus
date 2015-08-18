@@ -40,7 +40,7 @@ class Main extends PluginBase implements Listener{
     $entity = $event->getEntity();
     if($event instanceof EntityDamageByEntityEvent && $event->getDamager() instanceof Player){
       foreach($this->weaponsPlus->get("effects") as $itemid => $effectid){
-        if($event->getDamager()->getInventory()->getItemInHand()->getId() === $itemid && $entity->hasPermission("weaponsplus.effectblades.use") && $this->weaponsPlus->get("effect-blades-enabled") === true){
+        if($event->getDamager()->getInventory()->getItemInHand()->getId() === $itemid && $event->getDamager()->hasPermission("weaponsplus.effectblades.use") && $this->weaponsPlus->get("effect-blades-enabled") === true){
           $effectlevel = $this->weaponsPlus->get("effect-level") - 1; //For some reason, when giving the effect, the amplifier is the amplifier + 1...
           $effecttime = $this->weaponsPlus->get("effect-time");
           $particlevisible = $this->weaponsPlus->get("particles-visible");
