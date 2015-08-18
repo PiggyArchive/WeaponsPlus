@@ -10,8 +10,8 @@ permissions:
     description: "Everything :P"
     children:
       weaponsplus.flamebows.use:
-        default: op
+        default: true
         description: "Lets you use flamebows"
       weaponsplus.effectblades.use:
-        default: op
+        default: true
         description: "Lets you use effectblades"
