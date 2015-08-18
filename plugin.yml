@@ -4,3 +4,14 @@ version: 1.0.0
 api: [1.12.0]
 load: POSTWORLD
 author: MCPEPIG
+permissions:
+  weaponsplus:
+    default: op
+    description: "Everything :P"
+    children:
+      weaponsplus.flamebows.use:
+        default: op
+        description: "Lets you use flamebows"
+      weaponsplus.effectblades.use:
+        default: op
+        description: "Lets you use effectblades"
