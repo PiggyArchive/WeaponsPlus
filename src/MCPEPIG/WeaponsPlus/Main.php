@@ -3,6 +3,8 @@
 namespace MCPEPIG\WeaponsPlus;
 
 use pocketmine\Player;
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Effect;
 use pocketmine\event\Listener;
