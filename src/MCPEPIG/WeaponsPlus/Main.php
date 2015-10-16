@@ -22,7 +22,6 @@ class Main extends PluginBase implements Listener{
          "276:2:5:5:false"
       ),
       "effect-blades-enabled" => true
-      "particles-visible" => false,
       "flamebows-enabled" => true
     )));
     $this->getLogger()->info("§aWeaponsPlus by MCPEPIG loaded.");
