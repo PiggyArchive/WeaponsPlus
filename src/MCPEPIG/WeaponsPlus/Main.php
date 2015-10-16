@@ -19,7 +19,7 @@ class Main extends PluginBase implements Listener{
     @mkdir($this->getServer()->getDataPath() . "/plugins/WeaponsPlus/");
     $this->weaponsPlus = (new Config($this->getDataFolder()."config.yml", Config::YAML, array(
       "effects" => array(
-         "276:2:5:5"
+         "276:2:5:5:false"
       ),
       "effect-blades-enabled" => true
       "particles-visible" => false,
@@ -45,10 +45,8 @@ class Main extends PluginBase implements Listener{
         $effectid = $effectblade[1];
         $effectlevel = $effectblade[2];
         $effecttime = $effectblade[3];
+        $particlevisible = $effectblade[4];
         if($event->getDamager()->getInventory()->getItemInHand()->getId() === $itemid && $event->getDamager()->hasPermission("weaponsplus.effectblades.use") && $this->weaponsPlus->get("effect-blades-enabled") === true){
-          $effectlevel = $this->weaponsPlus->get("effect-level") - 1; //For some reason, when giving the effect, the amplifier is the amplifier + 1...
-          $effecttime = $this->weaponsPlus->get("effect-time");
-          $particlevisible = $this->weaponsPlus->get("particles-visible");
           $effect = Effect::getEffect($effectid);
           $effect->setAmplifier($effectlevel);
           $effect->setDuration($effecttime * 20);
