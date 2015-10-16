@@ -19,11 +19,9 @@ class Main extends PluginBase implements Listener{
     @mkdir($this->getServer()->getDataPath() . "/plugins/WeaponsPlus/");
     $this->weaponsPlus = (new Config($this->getDataFolder()."config.yml", Config::YAML, array(
       "effects" => array(
-         276 => 2
+         "276:2:5:5"
       ),
-      "effect-blades-enabled" => true,
-      "effect-level" => 5,
-      "effect-time" => 10,
+      "effect-blades-enabled" => true
       "particles-visible" => false,
       "flamebows-enabled" => true
     )));
