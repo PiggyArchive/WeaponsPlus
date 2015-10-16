@@ -38,21 +38,27 @@ class Main extends PluginBase implements Listener{
           return false;
         }
         switch($args[0]){
-          case "true":
+          case "on":
             break;
-          case "false":
+          case "off":
             break;
         }
         break;
       case "effectblades":
         if(count($args) !== 1){
-          $sender->sendMessage("/effectblades on|off");
+          $sender->sendMessage("/effectblades on|off|add");
           return false;
         }
         switch($args[0]){
-          case "true":
+          case "on":
             break;
-          case "false":
+          case "off":
+            break;
+          case "add":
+            if($sender->isOp() !== true){ //Ill use hasPermission() later
+              $sender->sendMessage("§cYou must be an op!");
+              return false;
+            }
             break;
         }
         break;
