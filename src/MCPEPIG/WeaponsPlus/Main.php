@@ -15,6 +15,9 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 
 class Main extends PluginBase implements Listener{
+  public $disabledeb = array();
+  public $disabledfb = array();
+  
   public function onEnable(){
     @mkdir($this->getServer()->getDataPath() . "/plugins/WeaponsPlus/");
     $this->weaponsPlus = (new Config($this->getDataFolder()."config.yml", Config::YAML, array(
@@ -30,7 +33,7 @@ class Main extends PluginBase implements Listener{
   public function onEntityUseBow(EntityShootBowEvent $event){
     $entity = $event->getEntity();
     if($entity instanceof Player){
-      if($entity->hasPermission("weaponsplus.flamebows.use") && $this->weaponsPlus->get("flamebows-enabled") === true){
+      if($entity->hasPermission("weaponsplus.flamebows.use") && $this->weaponsPlus->get("flamebows-enabled") === true && in_array($entity->getName(), $this->disabledfb) !== true){
         $event->getProjectile()->setOnFire(500000000 * 20);
       }
     }
