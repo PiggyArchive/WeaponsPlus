@@ -30,6 +30,34 @@ class Main extends PluginBase implements Listener{
     $this->getLogger()->info("§aWeaponsPlus by MCPEPIG loaded.");
     $this->getServer()->getPluginManager()->registerEvents($this, $this);
   }
+  public function onCommand(CommandSender $sender, Command $cmd, $label, array $args){
+    switch(strtolower($cmd->getName())){
+      case "flamebows":
+        if(count($args) !== 1){
+          $sender->sendMessage("/flamebows on|off");
+          return false;
+        }
+        switch($args[0]){
+          case "true":
+            break;
+          case "false":
+            break;
+        }
+        break;
+      case "effectblades":
+        if(count($args) !== 1){
+          $sender->sendMessage("/effectblades on|off");
+          return false;
+        }
+        switch($args[0]){
+          case "true":
+            break;
+          case "false":
+            break;
+        }
+        break;
+    }
+  }
   public function onEntityUseBow(EntityShootBowEvent $event){
     $entity = $event->getEntity();
     if($entity instanceof Player){
