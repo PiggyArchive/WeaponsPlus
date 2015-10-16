@@ -39,7 +39,12 @@ class Main extends PluginBase implements Listener{
   public function onEntityDamage(EntityDamageEvent $event){
     $entity = $event->getEntity();
     if($event instanceof EntityDamageByEntityEvent && $event->getDamager() instanceof Player){
-      foreach($this->weaponsPlus->get("effects") as $effectblades){
+      foreach($this->weaponsPlus->get("effects") as $effectbladedata){
+        $effectblade = explode(" ", $effectblade);
+        $itemid = $effectblade[0];
+        $effectid = $effectblade[1];
+        $effectlevel = $effectblade[2];
+        $effecttime = $effectblade[3];
         if($event->getDamager()->getInventory()->getItemInHand()->getId() === $itemid && $event->getDamager()->hasPermission("weaponsplus.effectblades.use") && $this->weaponsPlus->get("effect-blades-enabled") === true){
           $effectlevel = $this->weaponsPlus->get("effect-level") - 1; //For some reason, when giving the effect, the amplifier is the amplifier + 1...
           $effecttime = $this->weaponsPlus->get("effect-time");
