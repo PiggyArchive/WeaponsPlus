@@ -48,7 +48,7 @@ class Main extends PluginBase implements Listener{
         $effectlevel = $effectblade[2];
         $effecttime = $effectblade[3];
         $particlevisible = $effectblade[4];
-        if($event->getDamager()->getInventory()->getItemInHand()->getId() === $itemid && $event->getDamager()->hasPermission("weaponsplus.effectblades.use") && $this->weaponsPlus->get("effect-blades-enabled") === true){
+        if($event->getDamager()->getInventory()->getItemInHand()->getId() === $itemid && $event->getDamager()->hasPermission("weaponsplus.effectblades.use") && $this->weaponsPlus->get("effect-blades-enabled") === true && in_array($entity->getName(), $this->disabledeb) !== true){
           $effect = Effect::getEffect($effectid);
           $effect->setAmplifier($effectlevel);
           $effect->setDuration($effecttime * 20);
