@@ -34,8 +34,8 @@ class Main extends PluginBase implements Listener{
     switch(strtolower($cmd->getName())){
       case "flamebows":
         if(count($args) !== 1){
-          $sender->sendMessage("/flamebows on|off");
-          return false;
+          $sender->sendMessage("Usage: /flamebows on|off");
+          return true;
         }
         switch($args[0]){
           case "on":
@@ -55,7 +55,7 @@ class Main extends PluginBase implements Listener{
           case "off":
             break;
           case "add":
-            if($sender->isOp() !== true){ //Ill use hasPermission() later
+            if(!$sender->isOp()){ //Ill use hasPermission() later
               $sender->sendMessage("§cYou must be an op!");
               return false;
             }
