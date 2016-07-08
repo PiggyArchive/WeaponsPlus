@@ -30,6 +30,9 @@ class BreakReplaceCommand extends VanillaCommand{
         switch($args[0]){
             case "effectblade":
             case "eb":
+                if(!$sender->hasPermission("weaponsplus.command.effectblade")){
+                    return false;
+                }
                 if($this->plugin->getEBStatus($sender)){
                     $this->plugin->disableEB($sender);
                     $sender->sendMessage("§aEffectBlades disabled.");
