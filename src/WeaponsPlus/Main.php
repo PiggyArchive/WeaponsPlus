@@ -2,11 +2,13 @@
 
 namespace WeaponsPlus;
 
-use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
+use pocketmine\utils\Config;
+use pocketmine\Player;
 
-class Main extends PluginBase implements Listener{
-    public $ebstatuses = array();
+class Main extends PluginBase{
+    public $ebstatuses;
+    public $ebstatuseslist;
   
     public function onEnable(){
         $this->ebstatuseslist = new Config($this->getDataFolder() . "eb.yml", Config::YAML);
