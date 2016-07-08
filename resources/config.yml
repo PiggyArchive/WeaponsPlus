@@ -1,0 +1,9 @@
+---
+#If enabled, effect blades will give effects
+effect-blades: true
+#If enabled, enabling effect blades isn't needed to use them
+auto-enable-effect-blades: true
+#Your effect blades (Format: "id:damagevalue:effectid:amplifier:time:particles")
+effects:
+- "276:0:2:5:5:false"
+...
