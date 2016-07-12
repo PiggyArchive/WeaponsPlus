@@ -7,15 +7,15 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
 class BreakReplaceCommand extends VanillaCommand{
-	public function __construct($name, $plugin){
-		parent::__construct(
-			$name, "Toggle weapons", "/weaponsplus"
-		);
-		$this->setPermission("weaponsplus.command");
-		$this->plugin = $plugin;
-	}
+    public function __construct($name, $plugin){
+        parent::__construct(
+            $name, "Toggle weapons", "/weaponsplus"
+        );
+        $this->setPermission("weaponsplus.command");
+        $this->plugin = $plugin;
+    }
 
-	public function execute(CommandSender $sender, $currentAlias, array $args){
+    public function execute(CommandSender $sender, $currentAlias, array $args){
         if(!$this->testPermission($sender)){
             return true;
         }
