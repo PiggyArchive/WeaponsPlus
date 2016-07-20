@@ -8,7 +8,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDespawnEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\Listener;
+use pocketmine\event\Listener;;
 use pocketmine\level\Explosion;
 use pocketmine\Player;
 
@@ -56,16 +56,18 @@ class EventListener implements Listener {
             $shooter = $entity->shootingEntity;
             if($shooter instanceof Player) {
                 if($this->plugin->getGrenadeStatus($shooter) && $this->plugin->getConfig()->get("grenades")) {
-                    $strength = $this->plugin->getConfig()->get("grenade-strength");
-                    if(!is_null($this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"))) {
-                        $explosion = new \BadPiggy\Utils\BadPiggyExplosion($entity, $strength, $shooter, $this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"));
-                    } else {
-                        $explosion = new Explosion($entity, $strength, $shooter);
+                    if($shooter->getInventory()->getItemInHand()->getCustomName() == "Grenade") {
+                        $strength = $this->plugin->getConfig()->get("grenade-strength");
+                        if(!is_null($this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"))) {
+                            $explosion = new \BadPiggy\Utils\BadPiggyExplosion($entity, $strength, $shooter, $this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"));
+                        } else {
+                            $explosion = new Explosion($entity, $strength, $shooter);
+                        }
+                        if($this->plugin->getConfig()->get("terrain-damage")) {
+                            $explosion->explodeA();
+                        }
+                        $explosion->explodeB();
                     }
-                    if($this->plugin->getConfig()->get("terrain-damage")) {
-                        $explosion->explodeA();
-                    }
-                    $explosion->explodeB();
                 }
             }
         }

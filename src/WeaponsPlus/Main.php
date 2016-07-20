@@ -1,6 +1,8 @@
 <?php
 namespace WeaponsPlus;
 
+use pocketmine\inventory\BigShapedRecipe;
+use pocketmine\item\Item;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\Player;
@@ -19,6 +21,9 @@ class Main extends PluginBase {
         $this->loadEBStatuses();
         $this->loadGrenadeStatuses();
         $this->saveDefaultConfig();
+        $grenade = Item::get(Item::SNOWBALL, 0, 1);
+        $grenade->setCustomName("Grenade");
+        $this->getServer()->getCraftingManager()->registerRecipe((new BigShapedRecipe($grenade, "III", "IGI", "III"))->setIngredient("I", Item::get(Item::IRON_INGOT, null))->setIngredient("G", Item::get(Item::GUNPOWDER, null)));
         $this->getServer()->getCommandMap()->register('weaponsplus', new WeaponsPlusCommand('weaponsplus', $this));
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         $this->getLogger()->info("§aEnabled.");
