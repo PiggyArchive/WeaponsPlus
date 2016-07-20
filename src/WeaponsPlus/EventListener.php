@@ -24,7 +24,7 @@ class EventListener implements Listener {
             if($event instanceof EntityDamageByEntityEvent && $event->getDamager() instanceof Player) {
                 if(($this->plugin->getEBStatus($entity) || ($this->plugin->getConfig()->get("auto-enable-effect-blades") && !$this->plugin->getEBStatus($entity))) && $this->plugin->getConfig()->get("effect-blades")) {
                     foreach($this->plugin->getConfig()->get("effects") as $information) {
-                        $info = explode(" ", $info);
+                        $info = explode(" ", $information);
                         $itemid = $info[0];
                         $itemdamage = $info[1];
                         $effectid = $info[2];
