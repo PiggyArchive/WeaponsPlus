@@ -93,9 +93,9 @@ class EventListener implements Listener {
             if($player->getLevel()->getBlock($player->floor())->getId() == $this->plugin->getConfig()->get("landmine")) {
                 $strength = $this->plugin->getConfig()->get("landmine-strength");
                 if(!is_null($this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"))) {
-                    $explosion = new \BadPiggy\Utils\BadPiggyExplosion($player, $strength, $player, $this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"));
+                    $explosion = new \BadPiggy\Utils\BadPiggyExplosion($player, $strength, null, $this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"));
                 } else {
-                    $player = new Explosion($entity, $strength, $player);
+                    $player = new Explosion($entity, $strength);
                 }
                 $explosion->explodeA();
                 $explosion->explodeB();
