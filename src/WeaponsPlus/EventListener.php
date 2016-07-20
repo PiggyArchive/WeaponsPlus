@@ -2,9 +2,13 @@
 namespace WeaponsPlus;
 
 use pocketmine\entity\Effect;
+use pocketmine\entity\Snowball;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\EntityDespawnEvent;
+use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\Listener;
+use pocketmine\level\Explosion;
 use pocketmine\Player;
 
 class EventListener implements Listener {
@@ -22,9 +26,9 @@ class EventListener implements Listener {
         $entity = $event->getEntity();
         if($entity instanceof Player) {
             if($event instanceof EntityDamageByEntityEvent && $event->getDamager() instanceof Player) {
-                if(($this->plugin->getEBStatus($entity) || ($this->plugin->getConfig()->get("auto-enable-effect-blades") && !$this->plugin->getEBStatus($entity))) && $this->plugin->getConfig()->get("effect-blades")) {
+                if($this->plugin->getEBStatus($entity) && $this->plugin->getConfig()->get("effect-blades")) {
                     foreach($this->plugin->getConfig()->get("effects") as $information) {
-                        $info = explode(" ", $information);
+                        $info = explode(":", $information);
                         $itemid = $info[0];
                         $itemdamage = $info[1];
                         $effectid = $info[2];
@@ -41,6 +45,41 @@ class EventListener implements Listener {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    public function onDespawn(EntityDespawnEvent $event) {
+        $entity = $event->getEntity();
+        if($entity instanceof Snowball) {
+            $shooter = $entity->shootingEntity;
+            if($shooter instanceof Player) {
+                if($this->plugin->getGrenadeStatus($shooter) && $this->plugin->getConfig()->get("grenades")) {
+                    $strength = $this->plugin->getConfig()->get("grenade-strength");
+                    if(!is_null($this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"))) {
+                        $explosion = new \BadPiggy\Utils\BadPiggyExplosion($entity, $strength, $shooter, $this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"));
+                    } else {
+                        $explosion = new Explosion($entity, $strength, $shooter);
+                    }
+                    if($this->plugin->getConfig()->get("terrain-damage")) {
+                        $explosion->explodeA();
+                    }
+                    $explosion->explodeB();
+                }
+            }
+        }
+    }
+
+    public function onJoin(PlayerJoinEvent $event) {
+        $player = $event->getPlayer();
+        if($this->plugin->getConfig()->get("auto-enable-eb")) {
+            if(!isset($this->plugin->ebstatuses[strtolower($player->getName())])) {
+                $this->plugin->enableGrenades($player);
+            }
+        }
+        if($this->plugin->getConfig()->get("auto-enable-grenade")) {
+            if(!isset($this->plugin->grenadestatuses[strtolower($player->getName())])) {
+                $this->plugin->enableGrenades($player);
             }
         }
     }

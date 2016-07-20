@@ -5,14 +5,21 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\Player;
 
+use WeaponsPlus\Commands\WeaponsPlusCommand;
+
 class Main extends PluginBase {
     public $ebstatuses;
     public $ebstatuseslist;
+    public $grenadestatuses;
+    public $grenadestatuseslist;
 
     public function onEnable() {
         $this->ebstatuseslist = new Config($this->getDataFolder() . "eb.yml", Config::YAML);
+        $this->grenadestatuseslist = new Config($this->getDataFolder() . "grenades.yml", Config::YAML);
         $this->loadEBStatuses();
+        $this->loadGrenadeStatuses();
         $this->saveDefaultConfig();
+        $this->getServer()->getCommandMap()->register('weaponsplus', new WeaponsPlusCommand('weaponsplus', $this));
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         $this->getLogger()->info("§aEnabled.");
     }
@@ -41,9 +48,36 @@ class Main extends PluginBase {
     }
 
     public function getEBStatus(Player $player) {
-        if(!isset($this->ebstatuses[strtolower($player->getName())]))
-            return false;
+        if(!isset($this->ebstatuses[strtolower($player->getName())])) return false;
         return $this->ebstatuses[strtolower($player->getName())];
+    }
+
+    public function loadGrenadeStatuses() {
+        foreach($this->grenadestatuseslist->getAll() as $name => $status) {
+            $this->grenadestatuses[strtolower($name)] = $status;
+        }
+    }
+
+    public function saveGrenadeStatuses() {
+        foreach($this->grenadestatuses as $name => $status) {
+            $this->grenadestatuseslist->set($name, $status);
+        }
+        $this->grenadestatuseslist->save();
+    }
+
+    public function enableGrenades(Player $player) {
+        $this->grenadestatuses[strtolower($player->getName())] = true;
+        $this->saveGrenadeStatuses();
+    }
+
+    public function disableGrenades(Player $player) {
+        $this->grenadestatuses[strtolower($player->getName())] = false;
+        $this->saveGrenadeStatuses();
+    }
+
+    public function getGrenadeStatus(Player $player) {
+        if(!isset($this->grenadestatuses[strtolower($player->getName())])) return false;
+        return $this->grenadestatuses[strtolower($player->getName())];
     }
 
 }

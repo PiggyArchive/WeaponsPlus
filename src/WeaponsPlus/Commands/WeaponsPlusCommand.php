@@ -5,9 +5,9 @@ use pocketmine\command\defaults\VanillaCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class BreakReplaceCommand extends VanillaCommand {
+class WeaponsPlusCommand extends VanillaCommand {
     public function __construct($name, $plugin) {
-        parent::__construct($name, "Toggle weapons", "/weaponsplus");
+        parent::__construct($name, "Toggle weapons", "/weaponsplus", ["wp"]);
         $this->setPermission("weaponsplus.command");
         $this->plugin = $plugin;
     }
@@ -26,6 +26,7 @@ class BreakReplaceCommand extends VanillaCommand {
         }
         switch($args[0]) {
             case "effectblade":
+            case "effectblades":
             case "eb":
                 if(!$sender->hasPermission("weaponsplus.command.effectblade")) {
                     return false;
@@ -38,6 +39,19 @@ class BreakReplaceCommand extends VanillaCommand {
                     $sender->sendMessage("§aEffectBlades enabled.");
                 }
                 break;
+            case "grenade":
+            case "grenades":
+                if(!$sender->hasPermission("weaponsplus.command.grenade")) {
+                    return false;
+                }
+                if($this->plugin->getGrenadeStatus($sender)) {
+                    $this->plugin->disableGrenades($sender);
+                    $sender->sendMessage("§aGrenades disabled.");
+                } else {
+                    $this->plugin->enableGrenades($sender);
+                    $sender->sendMessage("§aGrenades enabled.");
+                }
+                break;
             case "list":
                 if(!isset($args[1])) {
                     $page = 1;
@@ -47,16 +61,18 @@ class BreakReplaceCommand extends VanillaCommand {
                 if(!is_numeric($page)) {
                     $page = 1;
                 }
-                if($page > 1) {
-                    $page = 1;
+                $maxpage = 1;
+                if($page > $maxpage) {
+                    $page = $maxpage;
                 }
                 switch($page) {
                     case 0:
                     case 1:
-                        $sender->sendMessage("--- Weapons Page 1 of 1---\n§2effectblades");
+                        $sender->sendMessage("--- Weapons Page 1 of " . $maxpage . "---\n§2effectblades\n§2grenade");
                         break;
                 }
                 return true;
+            default:
         }
         return true;
     }
