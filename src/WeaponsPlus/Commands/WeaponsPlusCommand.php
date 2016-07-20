@@ -58,8 +58,7 @@ class BreakReplaceCommand extends VanillaCommand {
                 }
                 return true;
         }
+        return true;
     }
-    return true;
-}
 
 }
