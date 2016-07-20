@@ -7,6 +7,7 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDespawnEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\Listener;
 use pocketmine\level\Explosion;
 use pocketmine\Player;
@@ -80,6 +81,22 @@ class EventListener implements Listener {
         if($this->plugin->getConfig()->get("auto-enable-grenade")) {
             if(!isset($this->plugin->grenadestatuses[strtolower($player->getName())])) {
                 $this->plugin->enableGrenades($player);
+            }
+        }
+    }
+
+    public function onMove(PlayerMoveEvent $event) {
+        $player = $event->getPlayer();
+        if($this->plugin->getConfig()->get("landmines")) {
+            if($player->getLevel()->getBlock($player->floor())->getId() == $this->plugin->getConfig()->get("landmine")) {
+                $strength = $this->plugin->getConfig()->get("landmine-strength");
+                if(!is_null($this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"))) {
+                    $explosion = new \BadPiggy\Utils\BadPiggyExplosion($player, $strength, $player, $this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"));
+                } else {
+                    $player = new Explosion($entity, $strength, $player);
+                }
+                $explosion->explodeA();
+                $explosion->explodeB();
             }
         }
     }

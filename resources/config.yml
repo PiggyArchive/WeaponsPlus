@@ -20,10 +20,18 @@ effect-blades: true
 #If enabled, effect blades will be enabled automatically
 auto-enable-eb: true
 #Your effect blades (Format: "id:damagevalue:effectid:amplifier:time:particles")
-effects: ["276:0:2:5:5:false"]
+effects: 
+- "276:0:2:5:5:false"
+- "272:0:20:5:5:false"
 #If enabled, grenades will function
 grenades: true
 #Strength of grenade explosion
 grenade-strength: 4
 #If enabled, grenades will effect terrain (Terrain damage can be restored if you  have BadPiggy)
 terrain-damage: false
+#If enabled, landmines will fuction
+landmines: true
+#Block for landmine
+landmine: 151
+#Strength of landmine explosion
+landmine-strength: 4
