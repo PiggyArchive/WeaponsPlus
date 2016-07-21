@@ -84,6 +84,7 @@ class EventListener implements Listener {
         if($entity instanceof Player) {
             if($event instanceof EntityDamageByEntityEvent && ($damager = $event->getDamager()) instanceof Player) {
                 $item = $damager->getInventory()->getItemInHand();
+                $damage = $item->getDamage();
                 if($this->plugin->getEBStatus($entity) && $this->plugin->getConfig()->get("effect-blades")) {
                     foreach($this->plugin->getConfig()->get("effects") as $information) {
                         $info = explode(":", $information);
@@ -107,12 +108,11 @@ class EventListener implements Listener {
                         $event->setDamage($this->plugin->getConfig()->get("spear-damage"));
                         $item->setDamage($item->getDamage() + 1);
                         if($damager->isSurvival()) {
-                            if($item->getDamage() >= 36) {
-                                $damager->getInventory()->removeItem(Item::get($item->getId(), $item->getDamage(), 1));
-                            } else {
-                                $item->setDamage($item->getDamage() + 1);
-                                $damager->getInventory()->setItemInHand($item);
+                            if($damage < 36) {
+                                $damage++;
                             }
+                            $item->setCount($item->getCount() - 1);
+                            $damager->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
                         }
                     }
                 }
@@ -148,11 +148,9 @@ class EventListener implements Listener {
         $arrow = $event->getArrow();
         if($player instanceof Player) {
             if(isset($arrow->namedtag["Spear"]) && isset($arrow->namedtag["Durability"])) {
-                if($arrow->namedtag["Durability"] < 36) {
-                    $spear = Item::get($this->plugin->getConfig()->get("spear"), $arrow->namedtag["Durability"], 1);
-                    $spear->setCustomName("Spear");
-                    $player->getInventory()->addItem($spear);
-                }
+                $spear = Item::get($this->plugin->getConfig()->get("spear"), $arrow->namedtag["Durability"], 1);
+                $spear->setCustomName("Spear");
+                $player->getInventory()->addItem($spear);
                 $arrow->kill();
                 $event->setCancelled();
             }
@@ -162,23 +160,21 @@ class EventListener implements Listener {
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
         $item = $item = $player->getInventory()->getItemInHand();
+        $damage = $item->getDamage();
         if($this->plugin->getConfig()->get("spears")) {
             if($player->getInventory()->getItemInHand()->getId() == $this->plugin->getConfig()->get("spear")) {
+                if($player->isSurvival()) {
+                    if($damage < 36) {
+                        $damage++;
+                    }
+                    $item->setCount($item->getCount() - 1);
+                    $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+                }
                 $aimPos = $player->getDirectionVector();
-                $nbt = new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x), new DoubleTag("", $player->y + $player->getEyeHeight()), new DoubleTag("", $player->z)]), "Motion" => new ListTag("Motion", [new DoubleTag("", $aimPos->x), new DoubleTag("", $aimPos->y), new DoubleTag("", $aimPos->z)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", $player->yaw), new FloatTag("", $player->pitch)]), "Spear" => new ByteTag("Spear", 1), "Durability" => new IntTag("Durability", $item->getDamage())]);
+                $nbt = new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x), new DoubleTag("", $player->y + $player->getEyeHeight()), new DoubleTag("", $player->z)]), "Motion" => new ListTag("Motion", [new DoubleTag("", $aimPos->x), new DoubleTag("", $aimPos->y), new DoubleTag("", $aimPos->z)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", $player->yaw), new FloatTag("", $player->pitch)]), "Spear" => new ByteTag("Spear", 1), "Durability" => new IntTag("Durability", $damage)]);
                 $f = 1.5;
                 $spear = Entity::createEntity("Arrow", $player->getLevel()->getChunk($player->getFloorX() >> 4, $player->getFloorZ() >> 4), $nbt, $player);
                 $spear->setMotion($spear->getMotion()->multiply($f));
-                if($player->isSurvival()) {
-                    if($item->getDamage() >= 36) {
-                        $item->setCount($item->getCount() - 1);
-                        $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
-                    } else {
-                        $item->setDamage($item->getDamage() + 1);
-                        $item->setCount($item->getCount() - 1);
-                        $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
-                    }
-                }
                 $player->getLevel()->addSound(new LaunchSound($player), $player->getViewers());
                 $spear->spawnToAll();
             }
