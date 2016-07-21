@@ -24,9 +24,12 @@ class Main extends PluginBase {
         $grenade = Item::get(Item::SNOWBALL, 0, 1);
         $grenade->setCustomName("Grenade");
         $this->getServer()->getCraftingManager()->registerRecipe((new BigShapedRecipe($grenade, "III", "IGI", "III"))->setIngredient("I", Item::get(Item::IRON_INGOT, null))->setIngredient("G", Item::get(Item::GUNPOWDER, null)));
-        $landmine = Item::get(151, 0, 1);
+        $landmine = Item::get($this->getConfig()->get("landmine"), 0, 1);
         $landmine->setCustomName("Landmine");
         $this->getServer()->getCraftingManager()->registerRecipe((new BigShapedRecipe($landmine, "QPQ", "QTQ", "QQQ"))->setIngredient("Q", Item::get(Item::QUARTZ, null))->setIngredient("P", Item::get(70, null))->setIngredient("T", Item::get(Item::TNT, null)));
+        $spear = Item::get($this->getConfig()->get("spear"), 0, 1);
+        $spear->setCustomName("Spear");
+        $this->getServer()->getCraftingManager()->registerRecipe((new BigShapedRecipe($spear, "  I", " S ", "S  "))->setIngredient("S", Item::get(Item::STICK, null))->setIngredient("I", Item::get(Item::IRON_INGOT, null)));
         $this->getServer()->getCommandMap()->register('weaponsplus', new WeaponsPlusCommand('weaponsplus', $this));
         $this->getServer()->getPluginManager()->registerEvents(new EventListener($this), $this);
         $this->getLogger()->info("§aEnabled.");

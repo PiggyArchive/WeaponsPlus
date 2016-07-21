@@ -35,5 +35,11 @@ landmines: true
 landmine: 151
 #Strength of landmine explosion
 landmine-strength: 4
+#If enabled, spears will fuction
+spears: true
+#Item for spears
+spear: 262
+#Damage for spears
+spear-damage: 7
 #If enabled, weapons must have a certain name to function
 name-required: true

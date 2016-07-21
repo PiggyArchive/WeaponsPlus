@@ -2,16 +2,28 @@
 namespace WeaponsPlus;
 
 use pocketmine\entity\Effect;
+use pocketmine\entity\Entity;
 use pocketmine\entity\Snowball;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDespawnEvent;
+use pocketmine\event\inventory\InventoryPickupArrowEvent;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\Listener;
+use pocketmine\item\Item;
+use pocketmine\level\sound\LaunchSound;
 use pocketmine\level\Explosion;
+use pocketmine\nbt\tag\ByteTag;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\network\protocol\PlayerActionPacket;
 use pocketmine\Player;
 
 class EventListener implements Listener {
@@ -90,6 +102,20 @@ class EventListener implements Listener {
                         }
                     }
                 }
+                if($this->plugin->getConfig()->get("spears")) {
+                    if($item->getId() == $this->plugin->getConfig()->get("spears") && $item->getCustomName() == "Spear") {
+                        $event->setDamage($this->plugin->getConfig()->get("spear-damage"));
+                        $item->setDamage($item->getDamage() + 1);
+                        if($damager->isSurvival()) {
+                            if($item->getDamage() >= 36) {
+                                $damager->getInventory()->removeItem(Item::get($item->getId(), $item->getDamage(), 1));
+                            } else {
+                                $item->setDamage($item->getDamage() + 1);
+                                $damager->getInventory()->setItemInHand($item);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -117,11 +143,53 @@ class EventListener implements Listener {
         }
     }
 
+    public function onPickupArrow(InventoryPickupArrowEvent $event) {
+        $player = $event->getInventory()->getHolder();
+        $arrow = $event->getArrow();
+        if($player instanceof Player) {
+            if(isset($arrow->namedtag["Spear"]) && isset($arrow->namedtag["Durability"])) {
+                if($arrow->namedtag["Durability"] < 36) {
+                    $spear = Item::get($this->plugin->getConfig()->get("spear"), $arrow->namedtag["Durability"], 1);
+                    $spear->setCustomName("Spear");
+                    $player->getInventory()->addItem($spear);
+                }
+                $arrow->kill();
+                $event->setCancelled();
+            }
+        }
+    }
+
+    public function onInteract(PlayerInteractEvent $event) {
+        $player = $event->getPlayer();
+        $item = $item = $player->getInventory()->getItemInHand();
+        if($this->plugin->getConfig()->get("spears")) {
+            if($player->getInventory()->getItemInHand()->getId() == $this->plugin->getConfig()->get("spear")) {
+                $aimPos = $player->getDirectionVector();
+                $nbt = new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x), new DoubleTag("", $player->y + $player->getEyeHeight()), new DoubleTag("", $player->z)]), "Motion" => new ListTag("Motion", [new DoubleTag("", $aimPos->x), new DoubleTag("", $aimPos->y), new DoubleTag("", $aimPos->z)]), "Rotation" => new ListTag("Rotation", [new FloatTag("", $player->yaw), new FloatTag("", $player->pitch)]), "Spear" => new ByteTag("Spear", 1), "Durability" => new IntTag("Durability", $item->getDamage())]);
+                $f = 1.5;
+                $spear = Entity::createEntity("Arrow", $player->getLevel()->getChunk($player->getFloorX() >> 4, $player->getFloorZ() >> 4), $nbt, $player);
+                $spear->setMotion($spear->getMotion()->multiply($f));
+                if($player->isSurvival()) {
+                    if($item->getDamage() >= 36) {
+                        $item->setCount($item->getCount() - 1);
+                        $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+                    } else {
+                        $item->setDamage($item->getDamage() + 1);
+                        $item->setCount($item->getCount() - 1);
+                        $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+                    }
+                }
+                $player->getLevel()->addSound(new LaunchSound($player), $player->getViewers());
+                $spear->spawnToAll();
+            }
+        }
+    }
+
     public function onJoin(PlayerJoinEvent $event) {
         $player = $event->getPlayer();
         if($this->plugin->getConfig()->get("auto-enable-eb")) {
             if(!isset($this->plugin->ebstatuses[strtolower($player->getName())])) {
-                $this->plugin->enableGrenades($player);
+                $this->plugin->enableEB($player);
             }
         }
         if($this->plugin->getConfig()->get("auto-enable-grenade")) {
