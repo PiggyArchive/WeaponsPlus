@@ -190,6 +190,7 @@ class EventListener implements Listener {
                 }
                 $explosion->explodeA();
                 $explosion->explodeB();
+                $event->setCancelled();
             }
         }
     }
