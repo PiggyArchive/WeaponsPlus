@@ -159,6 +159,7 @@ class EventListener implements Listener {
 
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
+        $block = $event->getBlock();
         $item = $item = $player->getInventory()->getItemInHand();
         $damage = $item->getDamage();
         if($this->plugin->getConfig()->get("spears")) {
@@ -177,6 +178,18 @@ class EventListener implements Listener {
                 $spear->setMotion($spear->getMotion()->multiply($f));
                 $player->getLevel()->addSound(new LaunchSound($player), $player->getViewers());
                 $spear->spawnToAll();
+            }
+        }
+        if($this->plugin->getConfig()->get("landmines")) {
+            if($block->getId() == $this->plugin->getConfig()->get("landmine")) {
+                $strength = $this->plugin->getConfig()->get("landmine-strength");
+                if(!is_null($this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"))) {
+                    $explosion = new \BadPiggy\Utils\BadPiggyExplosion($block, $strength, null, $this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"));
+                } else {
+                    $player = new Explosion($block, $strength);
+                }
+                $explosion->explodeA();
+                $explosion->explodeB();
             }
         }
     }
