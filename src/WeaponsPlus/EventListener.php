@@ -1,6 +1,7 @@
 <?php
 namespace WeaponsPlus;
 
+use pocketmine\block\Block;
 use pocketmine\entity\Arrow;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
@@ -10,6 +11,7 @@ use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityDespawnEvent;
+use pocketmine\event\entity\ExplosionPrimeEvent;
 use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\event\inventory\InventoryPickupArrowEvent;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -144,19 +146,22 @@ class EventListener implements Listener {
             }
         }
     }
-    
-    /*
-    public function onExplode(\pocketmine\event\entity\ExplosionPrimeEvent $event){
-        $event->setForce(1000);
+
+    public function onExplode(ExplosionPrimeEvent $event) {
+        $entity = $event->getEntity();
+        if(isset($entity->namedtag["Bazuka"])) {
+            if(!$this->plugin->getConfig()->get("terrain-damage")) {
+                $event->setBlockBreaking(false);
+            }
+        }
     }
-    */
 
     public function onPickupArrow(InventoryPickupArrowEvent $event) {
         $player = $event->getInventory()->getHolder();
         $arrow = $event->getArrow();
         if($player instanceof Player) {
             if(isset($arrow->namedtag["Spear"]) && isset($arrow->namedtag["Durability"])) {
-                if($arrow->namedtag["Durability"] < 36){
+                if($arrow->namedtag["Durability"] < 36) {
                     $spear = Item::get($this->plugin->getConfig()->get("spear"), $arrow->namedtag["Durability"], 1);
                     $spear->setCustomName("Spear");
                     $player->getInventory()->addItem($spear);
@@ -200,13 +205,13 @@ class EventListener implements Listener {
                     $player->getInventory()->removeItem(Item::get(Item::TNT, null, 1));
                     if($damage < 50) {
                         $item->setDamage($damage + 1);
-                    }else{
+                    } else {
                         $item->setCount($item->getCount() - 1);
                     }
                     $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
                 }
                 $aimPos = $player->getDirectionVector();
-                $nbt = new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x), new DoubleTag("", $player->y + $player->getEyeHeight()), new DoubleTag("", $player->z)]), "Motion" => new ListTag("Motion", [new DoubleTag("", -sin($player->yaw / 180 * M_PI) * cos($player->pitch / 180 * M_PI)), new DoubleTag("", -sin($player->pitch / 180 * M_PI)), new DoubleTag("", cos($player->yaw / 180 * M_PI) * cos($player->pitch / 180 * M_PI))]), "Rotation" => new ListTag("Rotation", [new FloatTag("", $player->yaw), new FloatTag("", $player->pitch)]), "Fuse" => new ByteTag("Fuse", 80)]);
+                $nbt = new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x), new DoubleTag("", $player->y + $player->getEyeHeight()), new DoubleTag("", $player->z)]), "Motion" => new ListTag("Motion", [new DoubleTag("", -sin($player->yaw / 180 * M_PI) * cos($player->pitch / 180 * M_PI)), new DoubleTag("", -sin($player->pitch / 180 * M_PI)), new DoubleTag("", cos($player->yaw / 180 * M_PI) * cos($player->pitch / 180 * M_PI))]), "Rotation" => new ListTag("Rotation", [new FloatTag("", $player->yaw), new FloatTag("", $player->pitch)]), "Fuse" => new ByteTag("Fuse", 80), "Bazuka" => new ByteTag("Bazuka", 1)]);
                 $f = 2;
                 $tnt = Entity::createEntity("PrimedTNT", $player->getLevel()->getChunk($player->getFloorX() >> 4, $player->getFloorZ() >> 4), $nbt, $player);
                 $tnt->setMotion($tnt->getMotion()->multiply($f));
@@ -222,7 +227,10 @@ class EventListener implements Listener {
                 } else {
                     $player = new Explosion($block, $strength);
                 }
-                $explosion->explodeA();
+                $player->getLevel()->setBlock($block, Block::get(Block::AIR));
+                if($this->plugin->getConfig()->get("terrain-damage")) {
+                    $explosion->explodeA();
+                }
                 $explosion->explodeB();
                 $event->setCancelled();
             }
@@ -258,7 +266,10 @@ class EventListener implements Listener {
                 } else {
                     $player = new Explosion($player, $strength);
                 }
-                $explosion->explodeA();
+                $player->getLevel()->setBlock($player->floor(), Block::get(Block::AIR));
+                if($this->plugin->getConfig()->get("terrain-damage")) {
+                    $explosion->explodeA();
+                }
                 $explosion->explodeB();
             }
         }
@@ -275,7 +286,10 @@ class EventListener implements Listener {
                     } else {
                         $player = new Explosion($projectile, $strength);
                     }
-                    $explosion->explodeA();
+                    $player->getLevel()->setBlock($projectile->floor(), Block::get(Block::AIR));
+                    if($this->plugin->getConfig()->get("terrain-damage")) {
+                        $explosion->explodeA();
+                    }
                     $explosion->explodeB();
                 }
             }
