@@ -52,6 +52,19 @@ class WeaponsPlusCommand extends VanillaCommand {
                     $sender->sendMessage("§aGrenades enabled.");
                 }
                 break;
+            case "bazuka":
+            case "bazukas":
+                if(!$sender->hasPermission("weaponsplus.command.bazukas")) {
+                    return false;
+                }
+                if($this->plugin->getBazukaStatus($sender)) {
+                    $this->plugin->disableBazukas($sender);
+                    $sender->sendMessage("§aBazukas disabled.");
+                } else {
+                    $this->plugin->enableBazukas($sender);
+                    $sender->sendMessage("§aBazukas enabled.");
+                }
+                break;
             case "list":
                 if(!isset($args[1])) {
                     $page = 1;
@@ -68,7 +81,7 @@ class WeaponsPlusCommand extends VanillaCommand {
                 switch($page) {
                     case 0:
                     case 1:
-                        $sender->sendMessage("--- Weapons Page 1 of " . $maxpage . "---\n§2effectblades\n§2grenade");
+                        $sender->sendMessage("--- Weapons Page 1 of " . $maxpage . "---\n§2effectblades\n§2grenades\n§2bazukas");
                         break;
                 }
                 return true;

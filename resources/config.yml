@@ -25,6 +25,8 @@ effects:
 - "272:0:20:5:5:false"
 #If enabled, grenades will function
 grenades: true
+#If enabled, grenades will be enabled automatically
+auto-enable-grenades: true
 #Strength of grenade explosion
 grenade-strength: 4
 #If enabled, grenades will effect terrain (Terrain damage can be restored if you  have BadPiggy)
@@ -41,5 +43,11 @@ spears: true
 spear: 262
 #Damage for spears
 spear-damage: 7
+#If enabled, bazukas will function
+bazukas: true
+#Item for bazuka
+bazuka: 369
+#If enabled, bazukaswill be enabled automatically
+auto-enable-bazukas: true
 #If enabled, weapons must have a certain name to function
 name-required: true

@@ -144,15 +144,23 @@ class EventListener implements Listener {
             }
         }
     }
+    
+    /*
+    public function onExplode(\pocketmine\event\entity\ExplosionPrimeEvent $event){
+        $event->setForce(1000);
+    }
+    */
 
     public function onPickupArrow(InventoryPickupArrowEvent $event) {
         $player = $event->getInventory()->getHolder();
         $arrow = $event->getArrow();
         if($player instanceof Player) {
             if(isset($arrow->namedtag["Spear"]) && isset($arrow->namedtag["Durability"])) {
-                $spear = Item::get($this->plugin->getConfig()->get("spear"), $arrow->namedtag["Durability"], 1);
-                $spear->setCustomName("Spear");
-                $player->getInventory()->addItem($spear);
+                if($arrow->namedtag["Durability"] < 36){
+                    $spear = Item::get($this->plugin->getConfig()->get("spear"), $arrow->namedtag["Durability"], 1);
+                    $spear->setCustomName("Spear");
+                    $player->getInventory()->addItem($spear);
+                }
                 $arrow->kill();
                 $event->setCancelled();
             }
@@ -165,7 +173,7 @@ class EventListener implements Listener {
         $item = $item = $player->getInventory()->getItemInHand();
         $damage = $item->getDamage();
         if($this->plugin->getConfig()->get("spears")) {
-            if($player->getInventory()->getItemInHand()->getId() == $this->plugin->getConfig()->get("spear")) {
+            if($item->getId() == $this->plugin->getConfig()->get("spear") && $item->getCustomName() == "Spear") {
                 if($player->isSurvival()) {
                     if($damage < 36) {
                         $damage++;
@@ -180,6 +188,30 @@ class EventListener implements Listener {
                 $spear->setMotion($spear->getMotion()->multiply($f));
                 $player->getLevel()->addSound(new LaunchSound($player), $player->getViewers());
                 $spear->spawnToAll();
+            }
+        }
+        if($this->plugin->getConfig()->get("bazukas")) {
+            if($item->getId() == $this->plugin->getConfig()->get("bazuka") && $item->getCustomName() == "Bazuka") {
+                if($player->isSurvival()) {
+                    $damage = $item->getDamage();
+                    if(!$player->getInventory()->contains(Item::get(Item::TNT, null, 1))) {
+                        return false;
+                    }
+                    $player->getInventory()->removeItem(Item::get(Item::TNT, null, 1));
+                    if($damage < 50) {
+                        $item->setDamage($damage - 1);
+                    }else{
+                        $item->setCount($item->getCount() - 1);
+                    }
+                    $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+                }
+                $aimPos = $player->getDirectionVector();
+                $nbt = new CompoundTag("", ["Pos" => new ListTag("Pos", [new DoubleTag("", $player->x), new DoubleTag("", $player->y + $player->getEyeHeight()), new DoubleTag("", $player->z)]), "Motion" => new ListTag("Motion", [new DoubleTag("", -sin($player->yaw / 180 * M_PI) * cos($player->pitch / 180 * M_PI)), new DoubleTag("", -sin($player->pitch / 180 * M_PI)), new DoubleTag("", cos($player->yaw / 180 * M_PI) * cos($player->pitch / 180 * M_PI))]), "Rotation" => new ListTag("Rotation", [new FloatTag("", $player->yaw), new FloatTag("", $player->pitch)]), "Fuse" => new ByteTag("Fuse", 80)]);
+                $f = 2;
+                $tnt = Entity::createEntity("PrimedTNT", $player->getLevel()->getChunk($player->getFloorX() >> 4, $player->getFloorZ() >> 4), $nbt, $player);
+                $tnt->setMotion($tnt->getMotion()->multiply($f));
+                $player->getLevel()->addSound(new LaunchSound($player), $player->getViewers());
+                $tnt->spawnToAll();
             }
         }
         if($this->plugin->getConfig()->get("landmines")) {
@@ -207,6 +239,11 @@ class EventListener implements Listener {
         if($this->plugin->getConfig()->get("auto-enable-grenade")) {
             if(!isset($this->plugin->grenadestatuses[strtolower($player->getName())])) {
                 $this->plugin->enableGrenades($player);
+            }
+        }
+        if($this->plugin->getConfig()->get("auto-enable-bazukas")) {
+            if(!isset($this->plugin->bazukastatuses[strtolower($player->getName())])) {
+                $this->plugin->enableBazukas($player);
             }
         }
     }

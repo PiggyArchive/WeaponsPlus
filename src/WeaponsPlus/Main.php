@@ -14,12 +14,16 @@ class Main extends PluginBase {
     public $ebstatuseslist;
     public $grenadestatuses;
     public $grenadestatuseslist;
+    public $bazukastatuses;
+    public $bazukastatuseslist;
 
     public function onEnable() {
         $this->ebstatuseslist = new Config($this->getDataFolder() . "eb.yml", Config::YAML);
         $this->grenadestatuseslist = new Config($this->getDataFolder() . "grenades.yml", Config::YAML);
+        $this->bazukastatuseslist = new Config($this->getDataFolder() . "bazukas.yml", Config::YAML);
         $this->loadEBStatuses();
         $this->loadGrenadeStatuses();
+        $this->loadBazukaStatuses();
         $this->saveDefaultConfig();
         $grenade = Item::get(Item::SNOWBALL, 0, 1);
         $grenade->setCustomName("Grenade");
@@ -89,6 +93,34 @@ class Main extends PluginBase {
     public function getGrenadeStatus(Player $player) {
         if(!isset($this->grenadestatuses[strtolower($player->getName())])) return false;
         return $this->grenadestatuses[strtolower($player->getName())];
+    }
+
+    public function loadBazukaStatuses() {
+        foreach($this->bazukastatuseslist->getAll() as $name => $status) {
+            $this->bazukastatuses[strtolower($name)] = $status;
+        }
+    }
+
+    public function saveBazukaStatuses() {
+        foreach($this->bazukastatuses as $name => $status) {
+            $this->bazukastatuseslist->set($name, $status);
+        }
+        $this->bazukastatuseslist->save();
+    }
+
+    public function enableBazukas(Player $player) {
+        $this->bazukastatuses[strtolower($player->getName())] = true;
+        $this->saveBazukaStatuses();
+    }
+
+    public function disableBazukas(Player $player) {
+        $this->bazukastatuses[strtolower($player->getName())] = false;
+        $this->saveBazukaStatuses();
+    }
+
+    public function getBazukasStatus(Player $player) {
+        if(!isset($this->bazukastatuses[strtolower($player->getName())])) return false;
+        return $this->bazukastatuses[strtolower($player->getName())];
     }
 
 }
