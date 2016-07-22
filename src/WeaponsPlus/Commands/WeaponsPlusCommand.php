@@ -65,6 +65,19 @@ class WeaponsPlusCommand extends VanillaCommand {
                     $sender->sendMessage("§aBazukas enabled.");
                 }
                 break;
+            case "enderpearl":
+            case "enderpearls":
+                if(!$sender->hasPermission("weaponsplus.command.enderpearls")) {
+                    return false;
+                }
+                if($this->plugin->getEnderpearlStatus($sender)) {
+                    $this->plugin->disableEnderpearls($sender);
+                    $sender->sendMessage("§aEnderpearls disabled.");
+                } else {
+                    $this->plugin->enableEnderpearls($sender);
+                    $sender->sendMessage("§aEnderpearls enabled.");
+                }
+                break;
             case "list":
                 if(!isset($args[1])) {
                     $page = 1;
@@ -81,7 +94,7 @@ class WeaponsPlusCommand extends VanillaCommand {
                 switch($page) {
                     case 0:
                     case 1:
-                        $sender->sendMessage("--- Weapons Page 1 of " . $maxpage . "---\n§2effectblades\n§2grenades\n§2bazukas");
+                        $sender->sendMessage("--- Weapons Page 1 of " . $maxpage . "---\n§2effectblades\n§2grenades\n§2bazukas\n§enderpearls");
                         break;
                 }
                 return true;

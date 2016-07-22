@@ -47,7 +47,11 @@ spear-damage: 7
 bazukas: true
 #Item for bazuka
 bazuka: 369
-#If enabled, bazukaswill be enabled automatically
+#If enabled, bazukas will be enabled automatically
 auto-enable-bazukas: true
+#If enabled, enderpearls will function
+enderpearls: true
+#If enabled, enderpearls will be enabled automatically
+auto-enable-enderpearls: true
 #If enabled, weapons must have a certain name to function
 name-required: true

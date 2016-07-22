@@ -16,14 +16,18 @@ class Main extends PluginBase {
     public $grenadestatuseslist;
     public $bazukastatuses;
     public $bazukastatuseslist;
+    public $enderpearlstatuses;
+    public $enderpearlstatuseslist;
 
     public function onEnable() {
         $this->ebstatuseslist = new Config($this->getDataFolder() . "eb.yml", Config::YAML);
         $this->grenadestatuseslist = new Config($this->getDataFolder() . "grenades.yml", Config::YAML);
         $this->bazukastatuseslist = new Config($this->getDataFolder() . "bazukas.yml", Config::YAML);
+        $this->enderpearlstatuseslist = new Config($this->getDataFolder() . "enderpearls.yml", Config::YAML);
         $this->loadEBStatuses();
         $this->loadGrenadeStatuses();
         $this->loadBazukaStatuses();
+        $this->loadEnderpearlStatuses();
         $this->saveDefaultConfig();
         $grenade = Item::get(Item::SNOWBALL, 0, 1);
         $grenade->setCustomName("Grenade");
@@ -121,6 +125,34 @@ class Main extends PluginBase {
     public function getBazukasStatus(Player $player) {
         if(!isset($this->bazukastatuses[strtolower($player->getName())])) return false;
         return $this->bazukastatuses[strtolower($player->getName())];
+    }
+
+    public function loadEnderpearlStatuses() {
+        foreach($this->enderpearlstatuseslist->getAll() as $name => $status) {
+            $this->enderpearlstatuses[strtolower($name)] = $status;
+        }
+    }
+
+    public function saveEnderpearlStatuses() {
+        foreach($this->enderpearlstatuses as $name => $status) {
+            $this->enderpearlstatuseslist->set($name, $status);
+        }
+        $this->enderpearlstatuseslist->save();
+    }
+
+    public function enableEnderpearls(Player $player) {
+        $this->enderpearlstatuses[strtolower($player->getName())] = true;
+        $this->saveEnderpearlStatuses();
+    }
+
+    public function disableEnderpearls(Player $player) {
+        $this->enderpearlstatuses[strtolower($player->getName())] = false;
+        $this->saveEnderpearlStatuses();
+    }
+
+    public function getEnderpearlStatus(Player $player) {
+        if(!isset($this->enderpearlstatuses[strtolower($player->getName())])) return false;
+        return $this->enderpearlstatuses[strtolower($player->getName())];
     }
 
 }
