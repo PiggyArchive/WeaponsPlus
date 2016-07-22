@@ -199,7 +199,7 @@ class EventListener implements Listener {
                     }
                     $player->getInventory()->removeItem(Item::get(Item::TNT, null, 1));
                     if($damage < 50) {
-                        $item->setDamage($damage - 1);
+                        $item->setDamage($damage + 1);
                     }else{
                         $item->setCount($item->getCount() - 1);
                     }
