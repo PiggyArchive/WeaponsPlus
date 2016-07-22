@@ -4,6 +4,7 @@ namespace WeaponsPlus;
 use pocketmine\block\Block;
 use pocketmine\entity\Arrow;
 use pocketmine\entity\Effect;
+use pocketmine\entity\Egg;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Snowball;
 use pocketmine\event\block\BlockBreakEvent;
@@ -110,12 +111,12 @@ class EventListener implements Listener {
                 if($this->plugin->getConfig()->get("spears")) {
                     if($item->getId() == $this->plugin->getConfig()->get("spears") && $item->getCustomName() == "Spear") {
                         $event->setDamage($this->plugin->getConfig()->get("spear-damage"));
-                        $item->setDamage($item->getDamage() + 1);
                         if($damager->isSurvival()) {
                             if($damage < 36) {
-                                $damage++;
+                                $item->setDamage($damage + 1);
+                            } else {
+                                $item->setCount($item->getCount() - 1);
                             }
-                            $item->setCount($item->getCount() - 1);
                             $damager->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
                         }
                     }
@@ -145,6 +146,16 @@ class EventListener implements Listener {
                 }
             }
         }
+        if($entity instanceof Egg) {
+            $shooter = $entity->shootingEntity;
+            if($shooter instanceof Player) {
+                if($this->plugin->getEnderpearlStatus($shooter) && $this->plugin->getConfig()->get("enderpearls")) {
+                    if($shooter->getInventory()->getItemInHand()->getCustomName() == "Enderpearl" || !$this->plugin->getConfig()->get("name-required")) {
+                        $shooter->teleport($entity->add(0, 1));
+                    }
+                }
+            }
+        }
     }
 
     public function onExplode(ExplosionPrimeEvent $event) {
@@ -165,6 +176,30 @@ class EventListener implements Listener {
                     $spear = Item::get($this->plugin->getConfig()->get("spear"), $arrow->namedtag["Durability"], 1);
                     $spear->setCustomName("Spear");
                     $player->getInventory()->addItem($spear);
+                } else {
+                    $fragments = array(
+                        Item::get(Item::STICK),
+                        Item::get(Item::STICK), //Yes, there are 2 so theres a chance of getting both sticks
+                        Item::get(Item::IRON_INGOT),
+                        Item::get(Item::AIR));
+                    $fragment = array_rand($fragments, mt_rand(1, 2));
+                    if(is_array($fragment)) {
+                        foreach($fragment as $key) {
+                            $fragment = $fragments[$key];
+                            if($fragment->getId() == 0) {
+                                return false;
+                            }
+                            $fragment->setCustomName("Spear Fragment");
+                            $player->getInventory()->addItem($fragment);
+                        }
+                    } else {
+                        $fragment = $fragments[$fragment];
+                        if($fragment->getId() == 0) {
+                            return false;
+                        }
+                        $fragment->setCustomName("Spear Fragment");
+                        $player->getInventory()->addItem($fragment);
+                    }
                 }
                 $arrow->kill();
                 $event->setCancelled();
@@ -181,7 +216,11 @@ class EventListener implements Listener {
             if($item->getId() == $this->plugin->getConfig()->get("spear") && $item->getCustomName() == "Spear") {
                 if($player->isSurvival()) {
                     if($damage < 36) {
-                        $damage++;
+                        if($damage + 2 > 36) {
+                            $damage = 36;
+                        } else {
+                            $damage = $damage + 2;
+                        }
                     }
                     $item->setCount($item->getCount() - 1);
                     $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
@@ -254,6 +293,11 @@ class EventListener implements Listener {
                 $this->plugin->enableBazukas($player);
             }
         }
+        if($this->plugin->getConfig()->get("auto-enable-enderpearls")) {
+            if(!isset($this->plugin->enderpearlstatuses[strtolower($player->getName())])) {
+                $this->plugin->enableEnderpearls($player);
+            }
+        }
     }
 
     public function onMove(PlayerMoveEvent $event) {
@@ -284,9 +328,9 @@ class EventListener implements Listener {
                     if(!is_null($this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"))) {
                         $explosion = new \BadPiggy\Utils\BadPiggyExplosion($projectile, $strength, null, $this->plugin->getServer()->getPluginManager()->getPlugin("BadPiggy"));
                     } else {
-                        $player = new Explosion($projectile, $strength);
+                        $explosion = new Explosion($projectile, $strength);
                     }
-                    $player->getLevel()->setBlock($projectile->floor(), Block::get(Block::AIR));
+                    $projectile->getLevel()->setBlock($projectile->floor(), Block::get(Block::AIR));
                     if($this->plugin->getConfig()->get("terrain-damage")) {
                         $explosion->explodeA();
                     }
