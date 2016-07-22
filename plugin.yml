@@ -1,6 +1,6 @@
 name: WeaponsPlus
 main: WeaponsPlus\Main
-version: 1.0.1 BETA4
+version: 1.0.1
 api: [2.0.0]
 author: MCPEPIG
 permissions:
