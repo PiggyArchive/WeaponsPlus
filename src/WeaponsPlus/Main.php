@@ -14,6 +14,10 @@ class Main extends PluginBase {
     public $ebstatuseslist;
     public $grenadestatuses;
     public $grenadestatuseslist;
+    public $landminestatuses;
+    public $landminestatuseslist;
+    public $spearstatuses;
+    public $spearstatuseslist;
     public $bazukastatuses;
     public $bazukastatuseslist;
     public $enderpearlstatuses;
@@ -22,10 +26,14 @@ class Main extends PluginBase {
     public function onEnable() {
         $this->ebstatuseslist = new Config($this->getDataFolder() . "eb.yml", Config::YAML);
         $this->grenadestatuseslist = new Config($this->getDataFolder() . "grenades.yml", Config::YAML);
+        $this->landminestatuseslist = new Config($this->getDataFolder() . "landmines.yml", Config::YAML);
+        $this->spearstatuseslist = new Config($this->getDataFolder() . "spears.yml", Config::YAML);
         $this->bazukastatuseslist = new Config($this->getDataFolder() . "bazukas.yml", Config::YAML);
         $this->enderpearlstatuseslist = new Config($this->getDataFolder() . "enderpearls.yml", Config::YAML);
         $this->loadEBStatuses();
         $this->loadGrenadeStatuses();
+        $this->loadLandmineStatuses();
+        $this->loadSpearStatuses();
         $this->loadBazukaStatuses();
         $this->loadEnderpearlStatuses();
         $this->saveDefaultConfig();
@@ -97,6 +105,62 @@ class Main extends PluginBase {
     public function getGrenadeStatus(Player $player) {
         if(!isset($this->grenadestatuses[strtolower($player->getName())])) return false;
         return $this->grenadestatuses[strtolower($player->getName())];
+    }
+
+    public function loadLandmineStatuses() {
+        foreach($this->landminestatuseslist->getAll() as $name => $status) {
+            $this->landminestatuses[strtolower($name)] = $status;
+        }
+    }
+
+    public function saveLandmineStatuses() {
+        foreach($this->landminestatuses as $name => $status) {
+            $this->landminestatuseslist->set($name, $status);
+        }
+        $this->landminestatuseslist->save();
+    }
+
+    public function enableLandmines(Player $player) {
+        $this->landminestatuses[strtolower($player->getName())] = true;
+        $this->saveLandmineStatuses();
+    }
+
+    public function disableLandmines(Player $player) {
+        $this->landminestatuses[strtolower($player->getName())] = false;
+        $this->saveLandmineStatuses();
+    }
+
+    public function getLandmineStatus(Player $player) {
+        if(!isset($this->landminestatuses[strtolower($player->getName())])) return false;
+        return $this->landminestatuses[strtolower($player->getName())];
+    }
+
+    public function loadSpearStatuses() {
+        foreach($this->spearstatuseslist->getAll() as $name => $status) {
+            $this->spearstatuses[strtolower($name)] = $status;
+        }
+    }
+
+    public function saveSpearStatuses() {
+        foreach($this->spearstatuses as $name => $status) {
+            $this->spearstatuseslist->set($name, $status);
+        }
+        $this->spearstatuseslist->save();
+    }
+
+    public function enableSpears(Player $player) {
+        $this->spearstatuses[strtolower($player->getName())] = true;
+        $this->saveSpearStatuses();
+    }
+
+    public function disableSpears(Player $player) {
+        $this->spearstatuses[strtolower($player->getName())] = false;
+        $this->saveSpearStatuses();
+    }
+
+    public function getSpearStatus(Player $player) {
+        if(!isset($this->spearstatuses[strtolower($player->getName())])) return false;
+        return $this->spearstatuses[strtolower($player->getName())];
     }
 
     public function loadBazukaStatuses() {

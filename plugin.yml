@@ -18,9 +18,15 @@ permissions:
           weaponsplus.command.grenades:
             default: op
             description: "Allows using Grenades"
+          weaponsplus.command.landmines:
+            default: op
+            description: "Allows using Landmines"
+          weaponsplus.command.spears:
+            default: op
+            description: "Allows using Spears"
           weaponsplus.command.bazukas:
             default: op
             description: "Allows using Bazukas"
           weaponsplus.command.enderpearls:
             default: op
-            description: "Allows using enderpearls"
+            description: "Allows using Enderpearls"

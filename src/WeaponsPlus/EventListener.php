@@ -67,7 +67,7 @@ class EventListener implements Listener {
     public function onPlace(BlockPlaceEvent $event) {
         $player = $event->getPlayer();
         $block = $event->getBlock();
-        if($this->plugin->getConfig()->get("landmines")) {
+        if($this->plugin->getLandmineStatus($player) && $this->plugin->getConfig()->get("landmines")) {
             if($block->getId() == $this->plugin->getConfig()->get("landmine")) {
                 if($this->plugin->getConfig()->get("name-required")) {
                     if(!$player->getInventory()->getItemInHand()->getCustomName() == "Landmine") {
@@ -208,6 +208,12 @@ class EventListener implements Listener {
         }
     }
 
+    public function onConsume(PlayerItemConsumeEvent $event) {
+        $player = $event->getPlayer();
+        $item = $event->getItem();
+
+    }
+
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
         $block = $event->getBlock();
@@ -286,9 +292,14 @@ class EventListener implements Listener {
                 $this->plugin->enableEB($player);
             }
         }
-        if($this->plugin->getConfig()->get("auto-enable-grenade")) {
+        if($this->plugin->getConfig()->get("auto-enable-grenades")) {
             if(!isset($this->plugin->grenadestatuses[strtolower($player->getName())])) {
                 $this->plugin->enableGrenades($player);
+            }
+        }
+        if($this->plugin->getConfig()->get("auto-enable-landmines")) {
+            if(!isset($this->plugin->landminestatuses[strtolower($player->getName())])) {
+                $this->plugin->enableLandmines($player);
             }
         }
         if($this->plugin->getConfig()->get("auto-enable-bazukas")) {

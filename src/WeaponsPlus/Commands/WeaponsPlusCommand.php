@@ -52,6 +52,32 @@ class WeaponsPlusCommand extends VanillaCommand {
                     $sender->sendMessage("§aGrenades enabled.");
                 }
                 break;
+            case "landmine":
+            case "landmines":
+                if(!$sender->hasPermission("weaponsplus.command.landmine")) {
+                    return false;
+                }
+                if($this->plugin->getLandmineStatus($sender)) {
+                    $this->plugin->disableLandmines($sender);
+                    $sender->sendMessage("§aLandmines disabled.");
+                } else {
+                    $this->plugin->enableLandmines($sender);
+                    $sender->sendMessage("§aLandmines enabled.");
+                }
+                break;
+            case "spear":
+            case "spears":
+                if(!$sender->hasPermission("weaponsplus.command.spear")) {
+                    return false;
+                }
+                if($this->plugin->getSpearStatus($sender)) {
+                    $this->plugin->disableSpears($sender);
+                    $sender->sendMessage("§aSpears disabled.");
+                } else {
+                    $this->plugin->enableSpears($sender);
+                    $sender->sendMessage("§aSpears enabled.");
+                }
+                break;
             case "bazuka":
             case "bazukas":
                 if(!$sender->hasPermission("weaponsplus.command.bazukas")) {
@@ -87,14 +113,17 @@ class WeaponsPlusCommand extends VanillaCommand {
                 if(!is_numeric($page)) {
                     $page = 1;
                 }
-                $maxpage = 1;
+                $maxpage = 2;
                 if($page > $maxpage) {
                     $page = $maxpage;
                 }
                 switch($page) {
                     case 0:
                     case 1:
-                        $sender->sendMessage("--- Weapons Page 1 of " . $maxpage . "---\n§2effectblades\n§2grenades\n§2bazukas\n§enderpearls");
+                        $sender->sendMessage("--- Weapons Page 1 of " . $maxpage . "---\n§2effectblade\n§2grenade\n§2landmine\n§2spear");
+                        break;
+                    case 1:
+                        $sender->sendMessage("--- Weapons Page 2 of " . $maxpage . "---\n§2bazuka\n§2enderpearl");
                         break;
                 }
                 return true;

@@ -35,12 +35,16 @@ terrain-damage: false
 landmines: true
 #Block for landmine
 landmine: 151
+#If enabled, grenades will be enabled automatically
+auto-enable-landmines: true
 #Strength of landmine explosion
 landmine-strength: 4
 #If enabled, spears will fuction
 spears: true
 #Item for spears
 spear: 262
+#If enabled, spears will be enabled automatically
+auto-enable-spears: true
 #Damage for spears
 spear-damage: 7
 #If enabled, bazukas will function
