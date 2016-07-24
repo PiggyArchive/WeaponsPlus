@@ -195,7 +195,7 @@ class Main extends PluginBase {
         $this->saveBazukaStatuses();
     }
 
-    public function getBazukasStatus(Player $player) {
+    public function getBazukaStatus(Player $player) {
         if(!isset($this->bazukastatuses[strtolower($player->getName())])) return false;
         return $this->bazukastatuses[strtolower($player->getName())];
     }
