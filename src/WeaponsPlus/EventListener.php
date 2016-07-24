@@ -115,6 +115,7 @@ class EventListener implements Listener {
                             if($damage < 36) {
                                 $item->setDamage($damage + 1);
                             } else {
+                                $item->setDamage(0); //The other spears shouldnt have the same durability as the one broken
                                 $item->setCount($item->getCount() - 1);
                             }
                             $damager->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
@@ -222,6 +223,7 @@ class EventListener implements Listener {
                             $damage = $damage + 2;
                         }
                     }
+                    $item->setDamage(0); //The other spears shouldnt have the same durability as the one broken
                     $item->setCount($item->getCount() - 1);
                     $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
                 }
@@ -245,6 +247,7 @@ class EventListener implements Listener {
                     if($damage < 50) {
                         $item->setDamage($damage + 1);
                     } else {
+                        $item->setDamage(0); //The other bazukas shouldnt have the same durability as the one broken
                         $item->setCount($item->getCount() - 1);
                     }
                     $player->getInventory()->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
