@@ -108,7 +108,7 @@ class EventListener implements Listener {
                         }
                     }
                 }
-                if($this->plugin->getConfig()->get("spears")) {
+                if($this->plugin->getSpearStatus($damager) && $this->plugin->getConfig()->get("spears")) {
                     if($item->getId() == $this->plugin->getConfig()->get("spears") && $item->getCustomName() == "Spear") {
                         $event->setDamage($this->plugin->getConfig()->get("spear-damage"));
                         if($damager->isSurvival()) {
@@ -208,18 +208,12 @@ class EventListener implements Listener {
         }
     }
 
-    public function onConsume(PlayerItemConsumeEvent $event) {
-        $player = $event->getPlayer();
-        $item = $event->getItem();
-
-    }
-
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
         $block = $event->getBlock();
         $item = $item = $player->getInventory()->getItemInHand();
         $damage = $item->getDamage();
-        if($this->plugin->getConfig()->get("spears")) {
+        if($this->plugin->getSpearStatus($player) && $this->plugin->getConfig()->get("spears")) {
             if($item->getId() == $this->plugin->getConfig()->get("spear") && $item->getCustomName() == "Spear") {
                 if($player->isSurvival()) {
                     if($damage < 36) {
@@ -242,7 +236,7 @@ class EventListener implements Listener {
                 $spear->spawnToAll();
             }
         }
-        if($this->plugin->getConfig()->get("bazukas")) {
+        if($this->plugin->getBazukaStatus($player) && $this->plugin->getConfig()->get("bazukas")) {
             if($item->getId() == $this->plugin->getConfig()->get("bazuka") && $item->getCustomName() == "Bazuka") {
                 if($player->isSurvival()) {
                     $damage = $item->getDamage();
