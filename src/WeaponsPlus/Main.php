@@ -37,6 +37,15 @@ class Main extends PluginBase {
         $this->loadBazukaStatuses();
         $this->loadEnderpearlStatuses();
         $this->saveDefaultConfig();
+        if($this->getConfig()->get("version") < 1) {
+            if($this->getConfig()->get("update-config")) {
+                rename($this->getDataFolder() . "config.yml", $this->getDataFolder() . "config.yml.".time().".bak");
+                $this->saveDefaultConfig(); //Recreate config :P
+                $this->getLogger()->info("§aYour config was out of date and has been updated.");
+            } else {
+                $this->getLogger()->critical("§cYour config is out of date!");
+            }
+        }
         $grenade = Item::get(Item::SNOWBALL, 0, 1);
         $grenade->setCustomName("Grenade");
         $this->getServer()->getCraftingManager()->registerRecipe((new BigShapedRecipe($grenade, "III", "IGI", "III"))->setIngredient("I", Item::get(Item::IRON_INGOT, null))->setIngredient("G", Item::get(Item::GUNPOWDER, null)));

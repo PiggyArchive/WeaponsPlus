@@ -59,3 +59,7 @@ enderpearls: true
 auto-enable-enderpearls: true
 #If enabled, weapons must have a certain name to function
 name-required: true
+#If enabled, config will update automatically
+update-config: true
+#PIGGY DEMANDS YOU TO NOT EDIT THIS!
+version: 1
