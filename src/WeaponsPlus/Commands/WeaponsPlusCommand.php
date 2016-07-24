@@ -106,28 +106,31 @@ class WeaponsPlusCommand extends VanillaCommand {
                 break;
             case "list":
                 if(!isset($args[1])) {
-                    $page = 1;
+                    $pagenumber = 1;
                 } else {
-                    $page = $args[1];
+                    $pagenumber = $args[1];
                 }
-                if(!is_numeric($page)) {
-                    $page = 1;
+                if(!is_numeric($pagenumber) || $pagenumber < 1) {
+                    $pagenumber = 1;
                 }
-                $maxpage = 2;
-                if($page > $maxpage) {
-                    $page = $maxpage;
+                $cmds = array("bazuka", "effectblades", "enderpearls", "grenades", "landmines", "list", "spears");
+                if($sender instanceof Player) {
+                    $pages = array_chunk($cmds, 4);
+                    $maxpage = count($pages);
+                    if($pagenumber > $maxpage) {
+                        $pagenumber = $maxpage;
+                    }
+                    $page = $pages[$pagenumber - 1];
+                    $list = "--- Weapons Page " . $pagenumber . " of " . $maxpage . " ---\n§2";
+                    $list = $list . implode("\n§2", $page);
+                } else {
+                    $list = "--- Weapons Page 1 of 1 ---\n§2";
+                    $list = $list . implode("\n§2", $cmds);
                 }
-                switch($page) {
-                    case 0:
-                    case 1:
-                        $sender->sendMessage("--- Weapons Page 1 of " . $maxpage . "---\n§2effectblade\n§2grenade\n§2landmine\n§2spear");
-                        break;
-                    case 1:
-                        $sender->sendMessage("--- Weapons Page 2 of " . $maxpage . "---\n§2bazuka\n§2enderpearl");
-                        break;
-                }
-                return true;
+                $sender->sendMessage($list);
+                break;
             default:
+                break;
         }
         return true;
     }
