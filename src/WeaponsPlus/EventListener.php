@@ -60,12 +60,6 @@ class EventListener implements Listener {
         }
     }
 
-    /**
-     * @param BlockPlaceEvent $event
-     *
-     * @priority MONITOR
-     * @ignoreCancelled true
-     */
     public function onPlace(BlockPlaceEvent $event) {
         $player = $event->getPlayer();
         $block = $event->getBlock();
@@ -170,6 +164,12 @@ class EventListener implements Listener {
         }
     }
 
+    /**
+     * @param InventoryPickupArrowEvent $event
+     *
+     * @priority MONITOR
+     * @ignoreCancelled true
+     */
     public function onPickupArrow(InventoryPickupArrowEvent $event) {
         $player = $event->getInventory()->getHolder();
         $arrow = $event->getArrow();
@@ -210,6 +210,12 @@ class EventListener implements Listener {
         }
     }
 
+    /**
+     * @param PlayerInteractEvent $event
+     *
+     * @priority MONITOR
+     * @ignoreCancelled true
+     */
     public function onInteract(PlayerInteractEvent $event) {
         $player = $event->getPlayer();
         $block = $event->getBlock();
