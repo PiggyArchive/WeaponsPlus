@@ -52,7 +52,9 @@ class EventListener implements Listener {
                 } else {
                     $player = new Explosion($block, $strength);
                 }
-                $explosion->explodeA();
+                if($this->plugin->getConfig()->get("terrain-damage")) {
+                    $explosion->explodeA();
+                }
                 $explosion->explodeB();
             }
         }
