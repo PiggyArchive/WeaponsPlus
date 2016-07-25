@@ -296,6 +296,11 @@ class EventListener implements Listener {
                 $this->plugin->enableLandmines($player);
             }
         }
+        if($this->plugin->getConfig()->get("auto-enable-spears")) {
+            if(!isset($this->plugin->spearstatuses[strtolower($player->getName())])) {
+                $this->plugin->enableSpears($player);
+            }
+        }
         if($this->plugin->getConfig()->get("auto-enable-bazukas")) {
             if(!isset($this->plugin->bazukastatuses[strtolower($player->getName())])) {
                 $this->plugin->enableBazukas($player);
