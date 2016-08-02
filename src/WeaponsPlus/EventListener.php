@@ -242,6 +242,7 @@ class EventListener implements Listener {
                 $spear->setMotion($spear->getMotion()->multiply($f));
                 $player->getLevel()->addSound(new LaunchSound($player), $player->getViewers());
                 $spear->spawnToAll();
+                $event->setCancelled();
             }
         }
         if($this->plugin->getBazukaStatus($player) && $this->plugin->getConfig()->get("bazukas")) {
@@ -267,6 +268,7 @@ class EventListener implements Listener {
                 $tnt->setMotion($tnt->getMotion()->multiply($f));
                 $player->getLevel()->addSound(new LaunchSound($player), $player->getViewers());
                 $tnt->spawnToAll();
+                $event->setCancelled();
             }
         }
         if($this->plugin->getConfig()->get("landmines")) {
